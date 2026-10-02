@@ -85,7 +85,7 @@ if (memberCount === 0) {
     ["Run", "studio", "Train", "Mon", "07:30", "Dana K.", 8],
     ["Lagree", "studio", "Train", "Tue", "08:00", "Mia S.", 4],
     ["Strength & Conditioning", "studio", "Train", "Tue", "17:30", "Coach Alicia", 10],
-    ["MMA Conditioning", "studio", "Train", "Wed", "18:30", "Coach Lawrence", 12],
+    ["Football Technical Session", "studio", "Train", "Wed", "18:30", "Coach Lawrence", 12],
     ["Yoga", "studio", "Recover", "Wed", "07:00", "Nadia R.", 10],
     ["Padel Court — 60min", "court", "Connect", "Thu", "19:00", "—", 4],
     ["Basketball Court — 60min", "court", "Connect", "Fri", "19:00", "—", 10],
@@ -134,8 +134,8 @@ if (memberCount === 0) {
 const coachCount = db.prepare("SELECT COUNT(*) c FROM coaches").get().c;
 if (coachCount === 0) {
   const coaches = [
-    ["Coach Alicia", "Performance Coach", "Former collegiate sprinter turned S&C specialist. Leads Alpha Performance 1:1 and group strength sessions.", "Strength & Conditioning", "#d9712e"],
-    ["Coach Lawrence", "MMA & Youth Coach", "Pro MMA background with a passion for youth development. Runs Alpha sessions, MMA conditioning and the Youth Football Academy.", "MMA · Alpha · Youth", "#8fae63"],
+    ["Coach Alicia", "S&C & Body Alignment Coach", "Strength & conditioning and body alignment specialist. Leads Alpha Performance 1:1, S&C and body alignment sessions.", "S&C · Body Alignment", "#d9712e"],
+    ["Coach Lawrence", "Football & Youth Coach", "Football technical coach with a passion for youth development. Runs Alpha sessions, football technical sessions and the Youth Football Academy.", "Football · Alpha · Youth", "#8fae63"],
     ["Coach Jordan", "Court & Cycle Coach", "Multi-sport athlete coaching basketball and cycle. Leads youth basketball programs.", "Cycle · Basketball", "#5b8def"],
     ["Dana K.", "Run Coach", "Ultra-marathoner and run-club leader. Specialises in endurance programming and gait analysis.", "Endurance · Run", "#e8746b"],
     ["Mia S.", "Lagree Coach", "Certified Lagree instructor bringing high-intensity low-impact training to the studio.", "Lagree · Studio", "#c47ad9"],
@@ -151,3 +151,16 @@ if (coachCount === 0) {
     "INSERT INTO classes (title,category,section,day,time,coach,spots_left) VALUES (?,?,?,?,?,?,?)"
   ).run("Alpha Performance 1:1", "coaching", "Perform", "Wed", "10:00", "Coach Lawrence", 1);
 }
+
+// --- Patch existing DB records after seed updates (idempotent) ---
+db.prepare(
+  "UPDATE coaches SET title=?, bio=?, specialty=? WHERE name=?"
+).run("S&C & Body Alignment Coach", "Strength & conditioning and body alignment specialist. Leads Alpha Performance 1:1, S&C and body alignment sessions.", "S&C · Body Alignment", "Coach Alicia");
+
+db.prepare(
+  "UPDATE coaches SET title=?, bio=?, specialty=? WHERE name=?"
+).run("Football & Youth Coach", "Football technical coach with a passion for youth development. Runs Alpha sessions, football technical sessions and the Youth Football Academy.", "Football · Alpha · Youth", "Coach Lawrence");
+
+db.prepare(
+  "UPDATE classes SET title=? WHERE title=? AND coach=?"
+).run("Football Technical Session", "MMA Conditioning", "Coach Lawrence");
