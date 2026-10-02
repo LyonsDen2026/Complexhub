@@ -3,6 +3,7 @@ import Layout from "./components/Layout.jsx";
 import Home from "./pages/Home.jsx";
 import Memberships from "./pages/Memberships.jsx";
 import Book from "./pages/Book.jsx";
+import Coaches from "./pages/Coaches.jsx";
 import Shop from "./pages/Shop.jsx";
 import Workouts from "./pages/Workouts.jsx";
 import Rewards from "./pages/Rewards.jsx";
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/memberships" element={<Memberships />} />
         <Route path="/book" element={<Book />} />
+        <Route path="/coaches" element={<Coaches />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/workouts" element={<Workouts />} />
         <Route path="/rewards" element={<Rewards />} />

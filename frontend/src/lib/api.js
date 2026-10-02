@@ -36,4 +36,6 @@ export const api = {
   logWorkout: (workout) => request("/workouts", { method: "POST", body: JSON.stringify(workout) }),
 
   getRewards: () => request("/rewards"),
+
+  getCoaches: () => request("/coaches"),
 };

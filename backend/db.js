@@ -53,6 +53,11 @@ CREATE TABLE IF NOT EXISTS rewards_log (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   member_id INTEGER, points INTEGER, reason TEXT, date TEXT DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS coaches (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT, title TEXT, bio TEXT, specialty TEXT, color TEXT
+);
 `);
 
 const memberCount = db.prepare("SELECT COUNT(*) c FROM members").get().c;
@@ -123,4 +128,26 @@ if (memberCount === 0) {
 
   db.prepare("INSERT INTO rewards_log (member_id,points,reason) VALUES (1,250,'Welcome bonus')").run();
   db.prepare("INSERT INTO rewards_log (member_id,points,reason) VALUES (1,2200,'Early member activity')").run();
+}
+
+// --- Seed coaches (independent of first-member seed) ---
+const coachCount = db.prepare("SELECT COUNT(*) c FROM coaches").get().c;
+if (coachCount === 0) {
+  const coaches = [
+    ["Coach Alicia", "Performance Coach", "Former collegiate sprinter turned S&C specialist. Leads Alpha Performance 1:1 and group strength sessions.", "Strength & Conditioning", "#d9712e"],
+    ["Coach Lawrence", "MMA & Youth Coach", "Pro MMA background with a passion for youth development. Runs Alpha sessions, MMA conditioning and the Youth Football Academy.", "MMA · Alpha · Youth", "#8fae63"],
+    ["Coach Jordan", "Court & Cycle Coach", "Multi-sport athlete coaching basketball and cycle. Leads youth basketball programs.", "Cycle · Basketball", "#5b8def"],
+    ["Dana K.", "Run Coach", "Ultra-marathoner and run-club leader. Specialises in endurance programming and gait analysis.", "Endurance · Run", "#e8746b"],
+    ["Mia S.", "Lagree Coach", "Certified Lagree instructor bringing high-intensity low-impact training to the studio.", "Lagree · Studio", "#c47ad9"],
+    ["Nadia R.", "Yoga & Recovery", "200hr RYT with a recovery-focused practice. Leads yoga, mobility and restore sessions.", "Yoga · Recovery", "#6bd4c4"],
+  ];
+  const insCoach = db.prepare(
+    "INSERT INTO coaches (name,title,bio,specialty,color) VALUES (?,?,?,?,?)"
+  );
+  for (const c of coaches) insCoach.run(...c);
+
+  // Add Alpha Performance 1:1 with Coach Lawrence
+  db.prepare(
+    "INSERT INTO classes (title,category,section,day,time,coach,spots_left) VALUES (?,?,?,?,?,?,?)"
+  ).run("Alpha Performance 1:1", "coaching", "Perform", "Wed", "10:00", "Coach Lawrence", 1);
 }
